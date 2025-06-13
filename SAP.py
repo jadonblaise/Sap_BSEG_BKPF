@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 class SAPAnalyzer:
     """Class to analyze SAP BSEG and BKPF data and compare it with 
@@ -195,4 +196,4 @@ if __name__ == "__main__":
     Analyzer.merge_tables()
     Analyzer.validate_data()
     Analyzer.compare_summary()
-    Analyzer.export_results("Abstimmung.xlsx")
+    #Analyzer.export_results("Abstimmung.xlsx")
