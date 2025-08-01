@@ -195,5 +195,5 @@ if __name__ == "__main__":
     Analyzer.load_data()
     Analyzer.merge_tables()
     Analyzer.validate_data()
-    Analyzer.compare_summary()
+    #Analyzer.compare_summary()
     #Analyzer.export_results("Abstimmung.xlsx")
