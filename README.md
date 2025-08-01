@@ -1,85 +1,79 @@
-<h1>SAPAnalyzer Class Documentation</h1>
+# 📊 SAP Analyzer
 
-<h2>Overview</h2>
-SAPAnalyzer is a Python class designed to load, merge, validate, and compare SAP financial data from the BSEG and BKPF tables against a provided summary balance sheet. The goal is to ensure the SAP data totals per general ledger account (hauptbuch) align with the summary sheet’s reported balances (endsaldo).
+A Python utility for analyzing **SAP BSEG and BKPF data** and comparing it to a **summary balance sheet**.  
+It performs:
 
-<h2>Key Functionalities</h2>
+- Data loading and cleaning (BSEG, BKPF, and summary sheet)
+- Merging of SAP tables on `belegnr`
+- Validation of missing or unmatched records
+- Comparison of **computed balances vs summary balances** per `hauptbuch` (GL account)
+- Optional **Excel export** of merged data and comparison results
 
-Initialization
-Accepts file paths for three input data sources:
+---
 
-- BSEG (SAP line item data)
+## 📦 Requirements
 
-- BKPF (SAP header data)
+- Python 3.8+
+- [pandas](https://pandas.pydata.org/)
+- [numpy](https://numpy.org/)
+- [openpyxl](https://pypi.org/project/openpyxl/) *(for Excel export)*
 
-- Summary (external balance sheet in Excel)
+## 📂 Expected Input Files
+BSEG.csv – SAP BSEG extract (pipe-separated |)
 
-<h2>Data Loading (load_data)</h2>
+BKPF.txt – SAP BKPF extract (pipe-separated |)
 
-- Loads BSEG and BKPF CSV files with appropriate encoding and delimiter.
+Susa_BergerUndCo.xlsx – Summary balance sheet (Excel format)
 
-- Loads the summary Excel sheet.
+### Key columns used:
 
-- Standardizes column names by stripping whitespace and lowercasing for consistency.
+belegnr – Document number for joining
 
-- Handles exceptions during file reading with error messages.
+hauptbuch – GL account
 
-<h2>Data Merging (merge_tables)</h2>
+betrag hauswähr – Amount in company currency
 
-- Merges BSEG and BKPF datasets on the key column belegnr (document number).
+endsaldo – Ending balance from summary
 
-- Uses inner join to retain only matching records.
+## ▶️ How to Run
+- Clone the Repository:\
+    git clone \
+    cd 
+- Activate virtual environment: \
+    source venv/bin/activate -- Linux/ MacOS \
+    venv/scripts/activate -- Windows
+  
+- Place your BSEG, BKPF, and summary files in the same directory as the script.
 
-<h2>Data Validation (validate_data)</h2>
+- Update the file paths in the __main__ section if your file names differ: \
+    Analyzer = SAPAnalyzer(
+      bseg_path="BSEG.csv",
+      bkpf_path="BKPF.txt",
+      summary_path="Susa_BergerUndCo.xlsx")
 
-- Checks for missing belegnr columns or null keys.
+- Install dependencies:
 
-- Identifies unmatched records by performing an outer merge with indicator.
+  pip install -r requirements.txt
 
-- Warns if BSEG lines lack BKPF headers or vice versa, highlighting potential data issues.
+- Run the script:
+    python SAP.py
 
-<h2>Summary Comparison (compare_summary)</h2>
+- The script will:
 
-- Validates presence of required columns (betrag hauswähr, hauptbuch, endsaldo).
+    Load and clean the datasets
+    
+    Merge BSEG and BKPF
+    
+    Validate missing records
+    
+    Compare computed balances to the summary sheet
 
-- Normalizes and cleans amount columns by replacing thousand separators and decimal marks to parse floats correctly.
+- (Optional) Uncomment the export_results line to save output to Excel:\
+    Analyzer.export_results("Abstimmung.xlsx")
 
-- Aggregates betrag hauswähr from merged data by hauptbuch to compute balances.
+## 📄 Notes
+Ensure betrag hauswähr and endsaldo columns are properly formatted for numeric conversion.
 
-- Normalizes hauptbuch account numbers to a 6-digit zero-padded string format.
+The script automatically normalizes GL account numbers (hauptbuch) to 6-digit strings for accurate matching.
 
-- Merges computed balances with summary balances, preserving the original summary row order.
-
-- Calculates the difference between computed and summary balances.
-
-- Stores comparison results in self.comparison_df.
-
-- Outputs a trimmed comparison with hauptbuch and computed balance for verification.
-
-<h2>Export Results (export_results)<h2>
-
-- Exports the full merged SAP data to an Excel sheet named AnalyzedData.
-
-- Exports a focused comparison table with only hauptbuch and endsaldo_computed to a sheet named BalancedComparison.
-
-- Provides confirmation messages on export success.
-
-<h2>Usage</h2>
-
-The class is instantiated with file paths to input data. Calling the following methods in order runs the full analysis and export:
-
-Analyzer.load_data()
-Analyzer.merge_tables()
-Analyzer.validate_data()
-Analyzer.compare_summary()
-Analyzer.export_results("Abstimmung.xlsx")
-
-<h2>Notes</h2>
-
-- The class is designed to be robust to missing or malformed data entries.
-
-- Column normalization and string cleaning ensure compatibility across SAP export formats.
-
-- Summary sheet rows with no matching SAP data will show NaN in computed balances.
-
-- The export limits output columns to those most relevant for review.
+Missing or unmatched records are reported in the console.
