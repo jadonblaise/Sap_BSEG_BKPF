@@ -37,7 +37,7 @@ endsaldo – Ending balance from summary
 
 ## ▶️ How to Run
 - Clone the Repository:\
-    git clone https://github.com/jadonblaise/Sap_BSEG_BKPF.git\
+    git clone https://github.com/jadonblaise/Sap_BSEG_BKPF.git \
     cd Sap_BSEG_BKPF
 - Activate virtual environment: \
     source venv/bin/activate -- Linux/ MacOS \
